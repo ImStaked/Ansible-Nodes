@@ -1,0 +1,29 @@
+---
+# change as needed or preffered
+_fetch_validator_system_group: "fetch"
+_fetch_validator_system_user: "fetch"
+
+fetch_github_repo: "https://github.com/fetchai/fetchd.git"
+fetch_genisis_url: "https://raw.githubusercontent.com/fetchai/genesis-fetchhub/fetchhub-4/fetchhub-4/data/genesis_migrated_5300200.json --output ~/.fetchd/config/genesis.json"
+fetch_HOME: "/home/fetch"
+fetch_version: "v0.11.0"
+fetchd_binary_location: "/home/fetch/go/bin/fetchd"
+fetchd_config_file: "/home/fetch/.fetchd/config/config.toml"
+fetchd_app_file: "/home/fetch/.fetchd/config/app.toml"
+
+# checksums
+fetch_v0.11.0_sha256: "eb98b8a7f161e75521fc94345c0fcea9f703eed2a25c2af8c33efd85d3d67795"
+genesis_sha1: "fe5fe42dc375ae33268c88cb03fe0c030c96f08ad96ad21921c58fd02fe711c9"
+
+# [config]
+admin_password: "testing"
+moniker: "ImStaked"
+min_gas_prices: "0.001afet"
+p2p_seeds: "17693da418c15c95d629994a320e2c4f51a8069b@connect-fetchhub.fetch.ai:36456,a575c681c2861fe945f77cb3aba0357da294f1f2@connect-fetchhub.fetch.ai:36457,d7cda986c9f59ab9e05058a803c3d0300d15d8da@connect-fetchhub.fetch.ai:36458,ade4d8bc8cbe014af6ebdf3cb7b1e9ad36f412c0@seeds.polkachu.com:15256,ebc272824924ea1a27ea3183dd0b9ba713494f83@fetchhub-mainnet-seed.autostake.com:27266,937d7371c9381aa7ae5f411129419a893164becf@seed-fetch.ibs.team:16659,e3d21a822e3903a96c14bfd8f8e06132f198d7c4@sentries-fetchhub.fetch.ai:36400,4be243f5d22403f6069d2ed3c4a79161216f22a0@sentries-fetchhub.fetch.ai:36401,d6faadb9e785642b355136ed278d5b5d6b2f87dd@sentries-fetchhub.fetch.ai:36402,ebc272824924ea1a27ea3183dd0b9ba713494f83@fetchhub-mainnet-peer.autostake.com:27266"
+rpc_servers: "https://rpc-fetchhub.fetch.ai:443,https://fetch-rpc.polkachu.com:443"
+rpc_url: "https://rpc-fetchhub.fetch.ai:443"
+
+#[generic]
+bech32_prefix: fetch
+chain_id: fetchhub-4
+local_checkout_dir: "/tmp/fetch"

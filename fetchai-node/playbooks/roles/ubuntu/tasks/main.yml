@@ -1,0 +1,10 @@
+---
+- import_tasks: apt.yml
+  become: no
+  tags: ubuntu_setup
+#- import_tasks: firwall.yml
+#  become: no
+#  tags: ubuntu_setup
+- import_tasks: user.yml
+  become: no
+  tags: ubuntu_setup
