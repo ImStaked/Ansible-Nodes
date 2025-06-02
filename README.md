@@ -1,8 +1,10 @@
-# Ansible Nodes
-- Build blockchain nodes with ansible
-- oraid(v0.50.11)
-- cosmovisor(v1.7.1)
-- lava(5.3.0)
+# Ansible Blockchain Nodes
+
+### Blockchain Validator/RPC node setup with Ansible
+- oraid (v0.50.11)
+- cosmovisor (v1.7.1)
+- lavad (v5.3.0)
+- fetchd (v0.14.1)
   
 ## Prerequsites
 - At minimum 2 hosts, the Ansible host and the Remote host to provision
