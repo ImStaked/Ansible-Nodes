@@ -1,0 +1,90 @@
+---
+- name: Create user group
+  group:
+    name: "{{ _lava_validator_system_group }}"
+    state: present
+    system: true
+  when: _lava_validator_system_group != "root"
+
+- name: Create user account
+  user:
+    name: "{{ _lava_validator_system_user }}"
+    group: "{{ _lava_validator_system_group }}"
+    shell: /bin/bash
+    create_home: true
+    home: "{{ lava_HOME }}"
+  when: _lava_validator_system_user != "root"
+
+- name: apt install gcc
+  ansible.builtin.package:
+    name: gcc
+    state: present
+
+- name: apt install make
+  ansible.builtin.package:
+    name: make
+    state: present
+
+- name: apt install jq
+  ansible.builtin.package:
+    name: jq
+    state: present
+
+- name: apt install lz4
+  ansible.builtin.package:
+    name: lz4
+    state: present
+
+- name: apt install unzip
+  ansible.builtin.package:
+    name: unzip
+    state: present
+
+- name: apt install coreutils
+  ansible.builtin.package:
+    name: coreutils
+    state: present
+
+- name: apt install git
+  ansible.builtin.package:
+    name: git
+    state: present
+
+- name: apt install wget
+  ansible.builtin.package:
+    name: wget
+    state: present
+
+- name: apt install curl
+  ansible.builtin.package:
+    name: curl
+    state: present
+
+- name: apt install sed
+  ansible.builtin.package:
+    name: sed
+    state: present
+
+- name: apt install logrotate
+  ansible.builtin.package:
+    name: logrotate
+    state: present
+
+- name: mkdir $HOME/go/bin 
+  ansible.builtin.file:
+    path: "{{ lavad_binary_path }}"
+    state: directory
+    mode: '0755'
+
+- name: chown $home to user account
+  ansible.builtin.file:
+    path: "{{ lava_HOME }}"
+    state: directory
+    recurse: yes
+    owner: lava
+    group: lava
+
+- name: snap install go --classic
+  community.general.snap:
+    name: go
+    classic: true

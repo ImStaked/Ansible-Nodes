@@ -1,0 +1,25 @@
+[Unit]
+Description=Lava Mainnet Validator
+Documentation=https://docs.lavanet.xyz
+After=network-online.target
+
+[Service]
+User=lava
+Group=lava
+Type=simple
+ExecStart=/home/lava/go/bin/cosmovisor run start --home /home/lava/.lavad
+Environment="lava_HOME=/home/lava"
+Environment="DAEMON_NAME=lavad"
+Environment="DAEMON_HOME=/home/lava/.lavad"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
+Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+Environment="DAEMON_LOG_BUFFER_SIZE=512"
+Environment="UNSAFE_SKIP_BACKUP=true"
+Restart=on-failure
+RestartSec=30
+StartLimitInterval=350
+StartLimitBurst=10
+
+[Install]
+WantedBy=multi-user.target
+

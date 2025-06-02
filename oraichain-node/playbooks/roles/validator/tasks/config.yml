@@ -1,0 +1,175 @@
+---
+- name: Create upgrade-info.json
+  copy:
+    src: templates/upgrade_info.json.j2
+    dest: "{{ oraid_HOME }}/data/upgrade_info.json"
+    owner: orai
+    group: orai
+    mode: u+rw
+  tags: create upgrade-info.json
+
+- name: Get wasm data
+  ansible.builtin.unarchive:
+    src: https://snapshots.polkachu.com/wasm/orai/orai_wasmonly.tar.lz4
+    dest: "{{ oraid_HOME }}"
+    remote_src: yes
+  tags: download_and_extract_wasm_data
+
+- name: Get latest block data
+  uri:
+    url: https://orai-rpc.polkachu.com:443/block
+    method: GET
+    return_content: yes
+    status_code: 200
+    body_format: json
+  register: blockData
+  # failed_when: <optional condition based on JSON returned content>
+  tags: get_latest_block_data
+
+- name: Enable state sync
+  replace:
+    path: /home/orai/.oraid/config/config.toml
+    regexp: 'enable = false'
+    replace: 'enable = {{ state_sync_enable | lower }}'
+  tags: enable_state_sync
+
+- name: Configure trusted height
+  replace:
+    path: /home/orai/.oraid/config/config.toml
+    regexp: 'trust_height = 0'
+    replace: 'trust_height = {{ blockData.json.result.block.header.height |int - 2000}}'
+  tags: configure_state_sync_trust_height
+
+
+- name: Get block data at trusted height
+  uri:
+    url: https://orai-rpc.polkachu.com:443/block?height={{ blockData.json.result.block.header.height |int - 2000}}
+    method: GET
+    return_content: yes
+    status_code: 200
+    body_format: json
+  register: trustedHeightData
+  # failed_when: <optional condition based on JSON returned content>
+  tags: get_trusted_height_block_data
+
+- name: Configure trusted hash
+  replace:
+    path: /home/orai/.oraid/config/config.toml
+    regexp: 'trust_hash = ""'
+    replace: 'trust_hash = "{{ trustedHeightData.json.result.block_id.hash }}"'
+  tags: configure_state_sync_trusted_hash
+
+- name: Configure State Sync RPC
+  replace:
+    path: "{{ config_toml_path }}"
+    regexp: 'rpc_servers = ""'
+    replace: 'rpc_servers = "https://rpc.orai.io:443,https://orai-rpc.polkachu.com:443"'
+  tags: configure_state_sync_rpc
+
+
+- name: Set min gas price
+  replace:
+    path: "{{ app_toml_path }}"
+    regexp: 'minimum-gas-prices = "0orai"'
+    replace: 'minimum-gas-prices = "{{ min_gas_prices }}"'
+  tags: configure_gas_price
+
+- name: Add p2p-seeds
+  replace:
+    path: "{{ config_toml_path }}"
+    regexp: 'seeds = ""'
+    replace: 'seeds = "{{ p2p_seeds }}"'
+  tags: configure_p2p.seeds
+
+- name: Node indexer setting
+  replace:
+    path: "{{ config_toml_path }}"
+    regexp: 'indexer = "kv"'
+    replace: 'indexer = "{{ node_indexer | lower }}"'
+  tags: configure_node_indexer
+
+- name: Change node pruning
+  replace:
+    path: "{{ app_toml_path }}"
+    regexp: 'pruning = "default"'
+    replace: 'pruning = "{{ pruning_type | lower }}"'
+  tags: configure_node_pruning
+
+- name: Configure custom pruning
+  replace:
+    path: "{{ app_toml_path }}"
+    regexp: 'pruning-keep-recent = "0"'
+    replace: 'pruning-keep-recent = "{{ pruning_keep_recent }}"'
+  tags: configure_node_pruning
+
+- name: Configure pruning interval
+  replace:
+    path: "{{ app_toml_path }}"
+    regexp: 'pruning-interval = "0"'
+    replace: 'pruning-interval = "{{ pruning_interval }}"'
+  tags: configure_node_pruning
+
+- name: Configure metrics
+  replace:
+    path: "{{ config_toml_path }}"
+    regexp: 'prometheus = false'
+    replace: 'prometheus = {{ enable_prometheus | lower }}'
+  tags: configure_metrics
+- name: Configure metrics listen address
+  replace:
+    path: "{{ config_toml_path }}"
+    regexp: 'prometheus_listen_addr = ":26660"'
+    replace: 'prometheus_listen_addr = "{{ prometheus_listen_addr }}"'
+  tags: configure_metrics_listen_address
+- name: Configure EVM RPC HTTP listen address
+  replace:
+    path: "{{ app_toml_path }}"
+    regexp: 'address = "127.0.0.1:8545"'
+    replace: 'address = "{{ EVM_HTTP_listen_addr }}"'
+  tags: configure_evmrpc_listen_address
+- name: Configure EVM RPC WS listen address
+  replace:
+    path: "{{ app_toml_path }}"
+    regexp: 'address = "127.0.0.1:8546"'
+    replace: 'address = "{{ EVM_WS_listen_addr }}"'
+  tags: configure_evmws_listen_address
+- name: Configure EVM metrics listen address
+  replace:
+    path: "{{ app_toml_path }}"
+    regexp: 'metrics-address = "127.0.0.1:6065"'
+    replace: 'metrics-address = "{{ EVM_metrics_listen_addr }}"'
+  tags: configure_evm_metrics_listen_address
+- name: Configure grpc listen address
+  replace:
+    path: "{{ app_toml_path }}"
+    regexp: 'address = "localhost:9090"'
+    replace: 'address = "{{ grpc_listen_addr }}"'
+  tags: configure_grpc_listen_address
+
+- name: Configure api listen address
+  replace:
+    path: "{{ app_toml_path }}"
+    regexp: 'address = "tcp://localhost:1317"'
+    replace: 'address = "{{ api_listen_addr }}"'
+  tags: configure_api_listen_address
+
+- name: P2P listen address
+  replace:
+    path: "{{ config_toml_path }}"
+    regexp: 'laddr = "tcp://0.0.0.0:26656"'
+    replace: 'laddr = "{{ p2p_laddr }}"'
+  tags: configure_p2p_address
+
+- name: PPROF listen address
+  replace:
+    path: "{{ config_toml_path }}"
+    regexp: 'pprof_laddr = "localhost:6060"'
+    replace: 'pprof_laddr = "{{ pprof_laddr }}"'
+  tags: configure_pprof_address
+
+- name: JSON RPC listen address
+  replace:
+    path: "{{ config_toml_path }}"
+    regexp: 'laddr = "tcp://127.0.0.1:26657"'
+    replace: 'laddr = "{{ json_rpc_laddr }}"'
+  tags: configure_json_rpc_address

@@ -1,0 +1,44 @@
+---
+# [accounts]
+_orai_validator_system_group: "orai"
+_orai_validator_system_user: "{{ _orai_validator_system_group }}"
+
+# [paths]
+orai_HOME: "/home/orai"
+oraid_HOME: "/home/orai/.oraid"
+config_toml_path: "/home/orai/.oraid/config/config.toml"
+app_toml_path: "/home/orai/.oraid/config/app.toml"
+oraid_binary_path: "/home/orai/go/bin"
+oraid_binary_location: "/home/orai/go/bin/oraid"
+golang_path: "/home/orai/go"
+
+# [config]
+moniker: "OraiNode"
+min_gas_prices: "0.001uorai"
+p2p_seeds: "ade4d8bc8cbe014af6ebdf3cb7b1e9ad36f412c0@seeds.polkachu.com:23356,d5999814f9d3bf34d1d4505a0d5dc4f56d202772@oraichain-mainnet-seed.itrocket.net:16656,e18f82a6da3a9842fa55769955d694f62f7f48bd@seed1.orai.zone:26656,defeea41a01b5afdb79ef2af155866e122797a9c@seed4.orai.zone:26656"
+persistent_peers: ""
+state_sync_enable: true
+node_indexer: "null" # options = null,kv,psql
+pruning_type: "custom" # options = default,everything,custom
+pruning_keep_recent: 20000
+pruning_interval: 10
+enable_prometheus: false
+prometheus_listen_addr: "127.0.0.1:26660"
+
+#[network]
+EVM_HTTP_listen_addr: "127.0.0.1:38545"
+EVM_WS_listen_addr: "127.0.0.1:38546"
+EVM_metrics_listen_addr: "127.0.0.1:36065"
+grpc_listen_addr: "localhost:39090"
+api_listen_addr: "localhost:31317"
+p2p_laddr: "tcp://0.0.0.0:26656"
+pprof_laddr: "localhost:6060"
+json_rpc_laddr: "tcp://127.0.0.1:26657"
+
+#[generic]
+bech32_prefix: orai
+chain_id: Oraichain
+orai_version: v0.50.10
+local_checkout_dir: /tmp/oraid
+
+

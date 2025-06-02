@@ -1,0 +1,50 @@
+---
+- name: Create the orai group
+  group:
+    name: "{{ _orai_validator_system_group }}"
+    state: present
+    system: true
+  when: _orai_validator_system_group != "root"
+
+- name: Create the orai user
+  user:
+    name: "{{ _orai_validator_system_user }}"
+    group: "{{ _orai_validator_system_group }}"
+    shell: /bin/bash
+    create_home: true
+    home: "{{ orai_HOME }}"
+  when: _orai_validator_system_user != "root"
+
+- name: Install gcc
+  ansible.builtin.package:
+    name: gcc
+    state: present
+
+- name: Install make
+  ansible.builtin.package:
+    name: make
+    state: present
+
+- name: Install jq
+  ansible.builtin.package:
+    name: jq
+    state: present
+    
+- name: Create go/bin directory
+  ansible.builtin.file:
+    path: "{{ oraid_binary_path }}"
+    state: directory
+    mode: '0755'
+
+- name: Recursively change ownership of users home
+  ansible.builtin.file:
+    path: "{{ orai_HOME }}"
+    state: directory
+    recurse: yes
+    owner: orai
+    group: orai
+
+- name: Install go using snap with option --classic
+  community.general.snap:
+    name: go
+    classic: true

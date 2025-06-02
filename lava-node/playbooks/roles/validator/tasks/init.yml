@@ -1,0 +1,74 @@
+---
+- name: Install cosmovissor
+  command: /snap/bin/go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.7.1
+  become: true
+  become_user: lava
+  args:
+    chdir: "{{ lava_HOME | quote }}/go/bin"
+    creates: "{{ lava_HOME | quote }}/go/bin/cosmovisor"
+  tags: install_cosmovisor
+
+- name: Init lavad
+  command: /home/lava/go/bin/lavad init "{{ moniker|quote }}" --chain-id "{{ chain_id|quote }}"
+  args:
+    creates: "{{ lava_HOME }}/.lava"
+  # skipping errors now for the ease of testing ... 
+  ignore_errors: yes
+  become: true
+  become_user: lava
+  tags: initialize_node
+
+- name: Download genesis file
+  get_url:
+    url: https://snapshots.kjnodes.com/lava/genesis.json
+    dest: "{{ lava_HOME }}/.lava/config/"
+    mode: '0440'
+  become: true
+  become_user: lava
+  tags: genesis_download
+
+- name: Download address book
+  get_url:
+    url: https://snapshots.kjnodes.com/lava/addrbook.json
+    dest: "{{ lava_HOME }}/.lava/config/"
+    mode: '0440'
+  become: true
+  become_user: lava
+  tags: addresss_book_download
+
+- name: Download chain snapshot
+  get_url:
+    url: https://snapshots.kjnodes.com/lava/snapshot_latest.tar.lz4
+    dest: "{{ lava_HOME }}/.lava"
+    mode: '0440'
+  become: true
+  become_user: lava
+  tags: addresss_book_download
+
+- name: change genesis file ownership to lava:lava
+  file:
+    path: "{{ lava_HOME }}/.lava/config/genesis.json"
+    mode: '0644'
+    owner: lava
+    group: lava
+  tags: genesis_download
+
+- name: Create genesis dir for cosmovisor
+  ansible.builtin.file:
+    path: "{{ lavad_HOME }}/cosmovisor/genesis/bin"
+    state: directory
+    mode: '0755'
+
+- name: Create upgrades dir for cosmovisor
+  ansible.builtin.file:
+    path: "{{ lavad_HOME }}/cosmovisor/upgrades/v0.50.10/bin"
+    state: directory
+    mode: '0755'
+
+- name: Copy lavad to cosmovisor
+  ansible.builtin.command:
+    cmd: cp "{{ lavad_binary_location }}" "{{ lava_HOME }}/.lava/cosmovisor/genesis/bin/lavad"
+
+- name: Copy lavad to cosmovisor
+  ansible.builtin.command:
+    cmd: cp "{{ lavad_binary_location }}"  "{{ lava_HOME }}/.lava/cosmovisor/upgrades/v0.50.10/bin/lavad"

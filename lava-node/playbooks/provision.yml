@@ -1,0 +1,10 @@
+---
+- name: Provision
+  hosts: all
+  gather_facts: yes
+  become: yes
+  roles:
+    - system
+    - validator
+  environment:
+    LD_LIBRARY_PATH: /home/lava

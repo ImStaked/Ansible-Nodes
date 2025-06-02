@@ -1,0 +1,25 @@
+[Unit]
+Description=Oraichain Node
+Documentation=https://docs.orai.com
+After=network-online.target
+
+[Service]
+User=orai
+Group=orai
+Type=simple
+ExecStart=/home/orai/go/bin/cosmovisor run start --home /home/orai/.oraid
+Environment="ORAI_HOME=/home/orai"
+Environment="DAEMON_NAME=oraid"
+Environment="DAEMON_HOME=/home/orai/.oraid"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
+Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+Environment="DAEMON_LOG_BUFFER_SIZE=512"
+Environment="UNSAFE_SKIP_BACKUP=true"
+Restart=on-failure
+RestartSec=30
+StartLimitInterval=350
+StartLimitBurst=10
+
+[Install]
+WantedBy=multi-user.target
+

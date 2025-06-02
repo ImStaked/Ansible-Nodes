@@ -1,0 +1,45 @@
+---
+- name: Configure Cosmovisor user environment
+  blockinfile:
+    path: "{{ orai_HOME | quote }}/.bashrc"
+    block: |
+      export ORAI_HOME="{{ orai_HOME | quote }}"
+      export DAEMON_NAME=oraid
+      export DAEMON_HOME="{{ oraid_HOME | quote }}"
+      export DAEMON_ALLOW_DOWNLOAD_BINARIES=true
+      export DAEMON_RESTART_AFTER_UPGRADE=true
+      export UNSAFE_SKIP_BACKUP=true
+      export GOROOT=/snap/bin/go
+      export GOPATH="{{ orai_HOME | quote}}/go"
+      export GO111MODULE=on
+      export PATH=$PATH:/usr/local/go/bin:"{{ oraid_binary_path | quote }}"
+      export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/go/pkg/mod/github.com/'!cosm!wasm'/wasmvm/v2@v2.1.3/internal/api
+      alias go='/snap/bin/go'
+    backup: yes
+  tags: configure_user_environment
+
+- name: Source .bashrc to load the environment
+  shell: source "{{ orai_HOME | quote}}/.bashrc"
+  args:
+    executable: /bin/bash
+  tags: source_bashrc
+
+- name: clone wasmd repo
+  git:
+    repo: 'https://github.com/oraichain/wasmd'
+    dest: "{{ local_checkout_dir | quote }}"
+    version: "{{ orai_version | quote}}"
+  tags: clone_git_repo
+
+- name: Run build target to compile
+  community.general.make:
+    chdir: "{{ local_checkout_dir | quote }}"
+    target: install
+    file: "{{ local_checkout_dir | quote }}/Makefile"
+    params:
+      make: /usr/bin/make
+  tags: oraid_build
+
+
+#- name: Change ownership of orai user home
+#  command: chown -R orai:orai /home/orai

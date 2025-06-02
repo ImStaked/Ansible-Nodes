@@ -1,0 +1,56 @@
+---
+- name: Install cosmovissor
+  command: /snap/bin/go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.7.1
+  become: true
+  become_user: orai
+  args:
+    chdir: "{{ orai_HOME | quote }}/go/bin"
+    creates: "{{ orai_HOME | quote }}/go/bin/cosmovisor"
+  tags: install_cosmovisor
+
+- name: Init oraid
+  command: /home/orai/go/bin/oraid init "{{ moniker|quote }}" --chain-id "{{ chain_id|quote }}"
+  args:
+    creates: "{{ orai_HOME }}/.oraid"
+  # skipping errors now for the ease of testing ... 
+  ignore_errors: yes
+  become: true
+  become_user: orai
+  tags: initialize_node
+
+- name: Download genesis file
+  get_url:
+    url: https://raw.githubusercontent.com/oraichain/oraichain-static-files/master/genesis.json
+    dest: "{{ orai_HOME }}/.oraid/config/"
+    mode: '0440'
+  become: true
+  become_user: orai
+  tags: genesis_download
+
+- name: change genesis file ownership to orai:orai
+  file:
+    path: "{{ orai_HOME }}/.oraid/config/genesis.json"
+    mode: '0644'
+    owner: orai
+    group: orai
+  tags: genesis_download
+
+- name: Create genesis dir for cosmovisor
+  ansible.builtin.file:
+    path: "{{ oraid_HOME }}/cosmovisor/genesis/bin"
+    state: directory
+    mode: '0755'
+
+- name: Create upgrades dir for cosmovisor
+  ansible.builtin.file:
+    path: "{{ oraid_HOME }}/cosmovisor/upgrades/v0.50.10/bin"
+    state: directory
+    mode: '0755'
+
+- name: Copy oraid to cosmovisor
+  ansible.builtin.command:
+    cmd: cp "{{ oraid_binary_location }}" "{{ orai_HOME }}/.oraid/cosmovisor/genesis/bin/oraid"
+
+- name: Copy oraid to cosmovisor
+  ansible.builtin.command:
+    cmd: cp "{{ oraid_binary_location }}"  "{{ orai_HOME }}/.oraid/cosmovisor/upgrades/v0.50.10/bin/oraid"

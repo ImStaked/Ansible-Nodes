@@ -1,0 +1,20 @@
+---
+- import_tasks: install.yml
+  become: true
+  become_user: lava
+  tags: compile_binaries
+- import_tasks: init.yml
+  become: true
+  become_user: lava
+  tags: initialize_node
+- import_tasks: config.yml
+  become: true
+  become_user: lava
+  tags: configure_node
+- import_tasks: lavad_service.yml
+  become: false
+  tags: systemd_config
+- import_tasks: service_check.yml
+  #become: true 
+  tags: service_check
+

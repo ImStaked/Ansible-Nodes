@@ -1,0 +1,25 @@
+---
+- name: install service script
+  copy:
+    src: templates/oraid.service.j2
+    dest: /etc/systemd/system/oraid.service
+    owner: root
+    group: root
+    mode: u+rw
+  tags: service_install
+- name: enable oraid.service
+  systemd:
+    name: oraid
+    enabled: true
+  tags: service_install
+- name: reload oraid.service
+  systemd:
+    name: oraid
+    daemon_reload: true
+  tags: service_install
+- name: start oraid
+  systemd:
+    name: oraid
+    state: started
+  tags: oraid_restart
+

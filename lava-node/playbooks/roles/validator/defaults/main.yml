@@ -1,0 +1,44 @@
+---
+# [accounts]
+_lava_validator_system_group: "lava"
+_lava_validator_system_user: "{{ _lava_validator_system_group }}"
+
+# [paths]
+lava_HOME: "/home/lava"
+lavad_HOME: "/home/lava/.lavad"
+config_toml_path: "/home/lava/.lava/config/config.toml"
+app_toml_path: "/home/lava/.lava/config/app.toml"
+lavad_binary_path: "/home/lava/go/bin"
+lavad_binary_location: "/home/lava/go/bin/lavad"
+golang_path: "/home/lava/go"
+
+# [config]
+moniker: "lavaNode"
+min_gas_prices: "0.000000001ulava"
+p2p_seeds: "400f3d9e30b69e78a7fb891f60d76fa3c73f0ecc@lava.rpc.kjnodes.com:14459"
+persistent_peers: ""
+state_sync_enable: true
+node_indexer: "null" # options = null,kv,psql
+pruning_type: "custom" # options = default,everything,custom
+pruning_keep_recent: 20000
+pruning_interval: 10
+enable_prometheus: false
+prometheus_listen_addr: "127.0.0.1:27770"
+
+#[network]
+EVM_HTTP_listen_addr: "127.0.0.1:18545"
+EVM_WS_listen_addr: "127.0.0.1:18546"
+EVM_metrics_listen_addr: "127.0.0.1:9099"
+grpc_listen_addr: "localhost:9097"
+api_listen_addr: "localhost:13177"
+p2p_laddr: "tcp://0.0.0.0:26676"
+pprof_laddr: "localhost:7070"
+json_rpc_laddr: "tcp://127.0.0.1:26677"
+
+#[generic]
+bech32_prefix: lava
+chain_id: lava-mainnet-1
+lava_version: v5.3.0
+local_checkout_dir: /tmp/lavad
+
+

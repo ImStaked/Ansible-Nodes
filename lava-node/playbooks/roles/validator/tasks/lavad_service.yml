@@ -1,0 +1,25 @@
+---
+- name: install service script
+  copy:
+    src: templates/lavad.service.j2
+    dest: /etc/systemd/system/lavad.service
+    owner: root
+    group: root
+    mode: u+rw
+  tags: service_install
+- name: enable lavad.service
+  systemd:
+    name: lavad
+    enabled: true
+  tags: service_install
+- name: reload lavad.service
+  systemd:
+    name: lavad
+    daemon_reload: true
+  tags: service_install
+- name: start lavad
+  systemd:
+    name: lavad
+    state: started
+  tags: lavad_restart
+

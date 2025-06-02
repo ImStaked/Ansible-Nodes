@@ -1,0 +1,44 @@
+---
+- name: Configure Cosmovisor user environment
+  blockinfile:
+    path: "{{ lava_HOME | quote }}/.bashrc"
+    block: |
+      export lava_HOME="{{ lava_HOME | quote }}"
+      export DAEMON_NAME=lavad
+      export DAEMON_HOME="{{ lavad_HOME | quote }}"
+      export DAEMON_ALLOW_DOWNLOAD_BINARIES=true
+      export DAEMON_RESTART_AFTER_UPGRADE=true
+      export UNSAFE_SKIP_BACKUP=true
+      export GOROOT=/snap/bin/go
+      export GOPATH="{{ lava_HOME | quote}}/go"
+      export GO111MODULE=on
+      export PATH=$PATH:/usr/local/go/bin:"{{ lavad_binary_path | quote }}"
+      alias go='/snap/bin/go'
+    backup: yes
+  tags: configure_user_environment
+
+- name: Source .bashrc to load the environment
+  shell: source "{{ lava_HOME | quote}}/.bashrc"
+  args:
+    executable: /bin/bash
+  tags: source_bashrc
+
+- name: clone lava repo
+  git:
+    repo: 'https://github.com/lavanet/lava.git'
+    dest: "{{ local_checkout_dir | quote }}"
+    version: "{{ lava_version | quote}}"
+  tags: clone_git_repo
+
+- name: Run build target to compile
+  community.general.make:
+    chdir: "{{ local_checkout_dir | quote }}"
+    target: install
+    file: "{{ local_checkout_dir | quote }}/Makefile"
+    params:
+      make: /usr/bin/make
+  tags: lavad_build
+
+
+#- name: Change ownership of lava user home
+#  command: chown -R lava:lava /home/lava
