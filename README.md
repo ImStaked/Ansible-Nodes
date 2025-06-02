@@ -1,8 +1,9 @@
-# Oraichain-Ansible-Node
-- This ansible project will create a basic Oraichain node
+# Ansible Nodes
+- Build blockchain nodes with ansible
 - oraid(v0.50.11)
 - cosmovisor(v1.7.1)
-
+- lava(5.3.0)
+  
 ## Prerequsites
 - At minimum 2 hosts, the Ansible host and the Remote host to provision
   
@@ -22,28 +23,28 @@
 ## Important Files
 - Inventory contains the IP address or addresses to act upon
   ```
-  config/inventory.yml
+  $CHAIN/config/inventory.yml
   ```
   
 - Ansible config requires the path to your ssh key created above
   ```
-  config/ansible.cfg
+  $CHAIN/config/ansible.cfg
   ```  
 - The validator defaults file has all configuration settings for the node being installed
   ```
-  playbooks/roles/validator/defaults/main.yml
+  $CHAIN/playbooks/roles/validator/defaults/main.yml
   ```
   
 ## Instructions
 - Clone this repo
   ```
-  git clone https://github.com/ImStaked/OraiChain-Ansible-Node.git
-  cd OraiChain-Ansible-Node
+  git clone https://github.com/ImStaked/Ansible-Nodes.git
+  cd Ansible-Nodes
   ```
 - To provision the remote host
   ```
-  bin/provision.yml -v
+  $CHAIN/bin/provision.yml -v
   ```
 
 ## Tested
-- 06-01-2025 success
+- 06-01-2025 oraichain success
