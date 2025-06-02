@@ -1,0 +1,19 @@
+---
+#- name: create setup script
+#  copy:
+#    src: templates/setup.sh.j2
+#    dest: /home/fetch/setup.sh
+#    owner: fetch
+#    group: fetch
+#    mode: '0744'
+#  tags: setup_script
+#- name: Make Script Executable
+#  ansible.builtin.file:
+#    path: /home/fetch/setup.sh
+#    owner: fetch
+#    group: fetch
+#    mode: '0644'
+#- name: execute setup script
+#  shell: /home/fetch/setup.sh
+#  args:
+#    executable: /bin/bash

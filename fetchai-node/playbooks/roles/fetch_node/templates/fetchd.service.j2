@@ -1,0 +1,15 @@
+[Unit]
+Description=Fetch Full Node
+After=network.target
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+User=fetch
+Type=simple
+Restart=always
+RestartSec=30
+ExecStart=/home/fetch/go/bin/fetchd start 
+
+[Install]
+WantedBy=default.target

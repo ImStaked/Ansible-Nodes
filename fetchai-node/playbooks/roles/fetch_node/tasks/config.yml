@@ -1,0 +1,53 @@
+---
+- name: add minimum gas prices config to app configuration file
+  replace:
+    path: "{{ fetchd_app_file }}"
+    regexp: 'minimum-gas-prices = ""'
+    replace: 'minimum-gas-prices = "{{ min_gas_prices }}"'
+  tags: config_edit
+- name: enable state sync
+  replace:
+    path: "{{ fetchd_config_file }}"
+    regexp: 'state_sync = false'
+    replace: 'state_sync = true'
+  tags: config_edit
+- name: add p2p-seeds
+  replace:
+    path: "{{ fetchd_config_file }}"
+    regexp: 'seeds = ""'
+    replace: 'seeds = "{{ p2p_seeds }}"'
+  tags: config_edit
+- name: State Sync RPC Servers
+  replace:
+    path: "{{ fetchd_config_file }}"
+    regexp: 'rpc_servers = ""'
+    replace: 'rpc_servers = "{{ rpc_servers }}"'
+  tags: config_edit
+- name: Get Height and Hash
+  uri:
+    url: https://rpc-fetchhub.fetch.ai:443/status
+    method: GET
+    return_content: yes
+    status_code: 200
+    body_format: json
+  register: data
+  tags: config_edit
+- name: add trusted block
+  replace:
+    path: /home/fetch/.fetchd/config/config.toml
+    regexp: 'trust_height = 0'
+    replace: 'trust_height = "{{ data.json.result.sync_info.latest_block_height }}"'
+  tags: config_edit
+- name: add trusted hash
+  replace:
+    path: /home/fetch/.fetchd/config/config.toml
+    regexp: 'trust_hash = ""'
+    replace: 'trust_hash = "{{ data.json.result.sync_info.latest_block_hash }}"'
+  tags: config_edit  
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: /home/fetch
+    state: directory
+    recurse: yes
+    owner: fetch
+    group: fetch

@@ -1,0 +1,11 @@
+---
+- name: Provision
+  hosts: all
+  gather_facts: yes
+  become: yes
+  roles:
+    - log
+    - ubuntu
+    - fetch_node
+  environment: 
+    LD_LIBRARY_PATH: /home/nym/
