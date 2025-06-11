@@ -11,7 +11,10 @@
   
 - Ansible  
   ```
-  pipx install ansible-core
+  sudo apt update && sudo apt upgrade -y
+  sudo apt install software-properties-common -y
+  sudo add-apt-repository ppa:ansible/ansible -y
+  sudo apt install ansible -y
   ```
 - ssh key to connect to the remote host
   ```
