@@ -38,7 +38,7 @@ json_rpc_laddr: "tcp://127.0.0.1:26657"
 #[generic]
 bech32_prefix: orai
 chain_id: Oraichain
-orai_version: v0.50.10
+orai_version: v0.50.11
 local_checkout_dir: /tmp/oraid
 
 
